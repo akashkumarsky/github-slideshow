@@ -1,0 +1,474 @@
+# Project jarvis
+# Stating date of project --> (30/04/2021)
+# ending date of project --->
+# @author ---> akash kumar
+
+import pyttsx3
+import speech_recognition as sr
+import datetime
+import wikipedia
+import webbrowser
+import os
+import random
+import smtplib
+import sys
+import cv2
+import importlib
+
+#-----------------------creating vice for jarvis--------------------------------------#
+engine = pyttsx3.init('sapi5')
+voices = engine.getProperty('voices')
+# print(voices[1].id)
+engine.setProperty('voice', voices[0].id)
+
+
+def speak(audio):
+    engine.say(audio)
+    engine.runAndWait()
+
+ #--------------------------------greeting funtion-------------------------------------#
+
+
+def wishme():
+    hour = int(datetime.datetime.now().hour)
+    if hour >= 0 and hour <= 12:
+        speak("Good Morning!")
+
+    elif hour > 12 and hour < 18:
+        speak("Good Afternoon!")
+
+    else:
+        speak("Good Evening!")
+
+    speak(" I am jarvis, sir Please tell me how may I help you")
+
+#---------------------funtions for printing and speaking-------------------------------#
+
+
+def Listening():
+    print("listening... sir")
+
+
+def reco():
+    print("Recognizing...")
+
+
+def said():
+    print("can't recoginize your voice")
+
+
+def saidspeak():
+    speak("can't recoginize your voice")
+
+
+#-----------------------funtion for searching on youtube----------------=--------------#
+def takeyoutubecommand():
+
+    r = sr.Recognizer()
+
+    with sr.Microphone() as source:
+        Listening()
+        r.energy_threshold = 5000
+        r.pause_threshold = 1
+        audio = r.listen(source)
+
+    try:
+        reco()
+        query = r.recognize_google(audio, language='en-in')
+        print("User said: "+query)
+        url = 'https://www.youtube.com/results?search_query='
+        search_url = url+query
+        webbrowser.open(search_url)
+
+    except Exception as e:
+        print(e)
+        saidspeak()
+        said()
+        return "none"
+
+    return query
+
+
+#---------------------funtion for searching on location on map-------------------------#
+def takegooglemapcommand():
+
+    r = sr.Recognizer()
+
+    with sr.Microphone() as source:
+        Listening()
+        r.energy_threshold = 5000
+        r.pause_threshold = 1
+        audio = r.listen(source)
+
+    try:
+        reco()
+        query = r.recognize_google(audio, language='en-in')
+        print("User said: "+query)
+        url = 'https://www.google.co.in/maps/place/'
+        search_url = url+query
+        speak("searching......")
+        webbrowser.open(search_url)
+        speak("opening your resusts sir")
+
+    except Exception as e:
+        print(e)
+        saidspeak()
+        said()
+        return "none"
+
+    return query
+    #---------------------funtion for searching road map-------------------------#
+
+
+def takegooglemap1command():
+
+    r = sr.Recognizer()
+
+    with sr.Microphone() as source:
+        Listening()
+        r.energy_threshold = 5000
+        r.pause_threshold = 1
+        audio = r.listen(source)
+
+    try:
+        reco()
+        query = r.recognize_google(audio, language='en-in')
+        print("User said: "+query)
+        url = 'https://www.google.co.in/maps/dir/'
+
+        search_url = url+query+"/"+takegooglemap2command()
+        speak("searching......")
+        webbrowser.open(search_url)
+        speak("opening your resusts sir")
+
+    except Exception as e:
+        print(e)
+        saidspeak()
+        said()
+        return "none"
+
+    return query
+
+
+def takegooglemap2command():
+
+    r = sr.Recognizer()
+    speak("were you want to go")
+    with sr.Microphone() as source:
+        Listening()
+        r.energy_threshold = 5000
+        r.pause_threshold = 1
+        audio = r.listen(source)
+
+    try:
+        reco()
+        query = r.recognize_google(audio, language='en-in')
+        print("User said: "+query)
+
+    except Exception as e:
+        print(e)
+        saidspeak()
+        said()
+        return "none"
+
+    return query
+#-------------------------funtion for searching on google------------------------------#
+
+
+def takegooglecommand():
+    r = sr.Recognizer()
+    with sr.Microphone() as source:
+        Listening()
+        r.energy_threshold = 5000
+        r.pause_threshold = 1
+        audio = r.listen(source)
+
+    try:
+        reco()
+        query = r.recognize_google(audio, language='en-in')
+        print("User Said: " + query)
+        url = 'https://www.google.com/search?q='
+        search_url = url+query
+        webbrowser.open(search_url)
+
+    except Exception as e:
+        print(e)
+        saidspeak()
+        said()
+        return "none"
+
+    return query
+
+ #------------------------------sleeping jarvis funtion-------------------------------#
+
+
+def sleep():
+    r = sr.Recognizer()
+    with sr.Microphone() as source:
+
+        r.pause_threshold = 1
+        audio = r.listen(source)
+
+    try:
+
+        query = r.recognize_google(audio, language='en-in')
+        print("User said: "+query)
+
+    except Exception as e:
+        print(e)
+
+        return "none"
+
+    return query
+
+
+#-----------------------Main funtion for commanding jarvis-----------------------------#
+def takecommand():
+    r = sr.Recognizer()
+    with sr.Microphone() as source:
+        Listening()
+        r.pause_threshold = 1
+        audio = r.listen(source)
+
+    try:
+        reco()
+        query = r.recognize_google(audio, language='en-in')
+        print("User said: "+query)
+
+    except Exception as e:
+        print(e)
+        saidspeak()
+        said()
+        speak("sir, do you have any other work, please tell me")
+        return "none"
+
+    return query
+
+
+if __name__ == "__main__":
+
+    wishme()  # call funtion
+
+while True:
+
+    query = takecommand().lower()  # .lower for matching voice in lower case
+
+
+#---------------------------------search of wikipedia----------------------------------#
+    if 'wikipedia' in query:
+        speak('Searching wikipedia...')
+        query = query.replace("wikipedia", "")
+        results = wikipedia.summary(query, sentences=2)
+        speak("According to wikipedia")
+        print(results)
+        speak(results)
+
+   #----------------------------------Open browser commands----------------------------#
+    elif 'open youtube' in query:
+        speak("opening... youtube")
+        webbrowser.open("https://www.youtube.com/")
+
+    elif 'open google' in query:
+        speak("opening... google")
+        webbrowser.open("https://www.google.com/")
+
+    elif'open whatsapp' in query:
+        speak("opening...whatsapp")
+        webbrowser.open("https://web.whatsapp.com/")
+
+    elif'open instagram' in query:
+        speak("Opening instagram")
+        webbrowser.open("https://www.instagram.com/")
+
+    elif'check my instagram' in query:
+        speak("cheaking your instagram")
+        webbrowser.open("https://www.instagram.com/")
+        speak("You don't have any notification")
+
+ #-----------------------Playing random music command----------------------------------#
+    elif 'play music' in query or 'play some music' in query or 'play songs' in query or 'play song' in query:
+        speak("play music for you...")
+        n = random.randint(0, 100)
+        print(n)
+        music_dir = "D:\\music 1"
+        songs = os.listdir(music_dir)
+        # print(songs)
+        os.startfile(os.path.join(music_dir, songs[n]))
+
+ #---------------------------Playing sequence music------------------------------------#
+    elif"play my playlist" in query:
+        speak("playing your playlist")
+        npath = 'D:\\music 1\\Zumba - Good Newwz.mp3.xspf'
+        os.startfile(npath)
+
+#--------------------------------command for playing video-----------------------------#
+    elif"play video song" in query:
+        speak("playing your video songs sir")
+        npath = 'D:\\video songs\\Wish - Diler Kharkiya Ft. Ginni Kapoor _ New Song 2020 _ Haryanvi songs _ Su11meet Singh _ Moto Song ( 1080 X 1920 ).mp4.xspf'
+        os.startfile(npath)
+
+  #-----------------------qustion answring to jarvis----------------------=------------#
+    elif 'who is akash' in query or 'who create you' in query:
+        speak(
+            "sir , akash is my creater he create me with some friend like aman and anshuman")
+
+    elif 'hello sky' in query:
+        speak("hello sir, Please tell me how may I help you")
+
+    elif 'windows specification' in query:
+        speak("Edition	Windows 10 Home Single Language,Version	20H2,Installed on	‎05-‎10-‎2020,OS build	19042.867,Experience	Windows Feature Experience Pack 120.2212.551.0")
+
+    elif 'device specification' in query:
+        speak("Device name	DESKTOP-I1N2GF5 ,Processor	AMD A6-5200 APU with Radeon(TM) HD Graphics       2.00 GHz,Installed RAM	4.00 GB (3.46 GB usable),Device ID	9DDB6F4F-00CD-4794-955C-496CE729899E,Product ID	00327-70000-00001-AA559,System type	64-bit operating system, x64-based processor,Pen and touch Touch support with 10 touch points")
+
+    elif'wake up' in query:
+        speak("sir i am already  awake ,how me I help you")
+
+    elif'who are you jarvis' in query:
+        speak("sir, i'm your companion and I'm  here to help you get  things done, and entertain you")
+
+    elif'why your name is jarvis' in query:
+        speak("sir, My creater was big fan of  iron man,and iron man have voice Assistant named as jarvis so, my boss create me and named jarvis")
+
+#-------------------------command for searching on google------------------------------#
+    elif 'search on google' in query:
+        speak("what should i search sir")
+        search = takegooglecommand()
+
+#-------------------------command for searching on map------------------------------#
+    elif 'search on map' in query:
+        speak("what should i search on map sir")
+        search = takegooglemapcommand()
+#-------------------------command for searching on map test------------------------------#
+    elif 'find road map' in query:
+        speak("tell me your courrent location")
+        search = takegooglemap1command()
+
+#-------------------------command for searching on youtube-----------------------------#
+    elif 'search on youtube' in query:
+        speak("what should i search sir")
+        search = takeyoutubecommand()
+#-------------------------------e-mail command-----------------------------------------#
+    # elif 'email to akash' in query:
+    #     try:
+    #         speak("what should I say?")
+    #         content = takecommand()
+    #         to = "akash220701@gamil.com"
+    #         sendEmail(to, content)
+    #         speak("Email has been sent!")
+    #     except Exception as e:
+    #         print(e)
+    #         speak("sorry can't sent try again later")
+
+
+#------------------------Time command for asking time to jarvis------------------------#
+    elif"the time" in query:
+        strTime = datetime.datetime.now().strftime("%H Hour %M minutes %S seconds")
+        speak("sir,  the time is" + strTime)
+
+
+#----------------------Open command for opening pc softwere---------------------------#
+    elif"open notepad" in query:
+        speak("opening... notepad")
+        npath = 'C:\\WINDOWS\\system32\\notepad.exe'
+        os.startfile(npath)
+
+    elif"open code" in query:
+        speak("opening... vs code")
+        npath = 'C:\\Users\\akash\\AppData\\Local\\Programs\\Microsoft VS Code\\Code.exe'
+        os.startfile(npath)
+
+    elif"open eclipse" in query:
+        speak("opening... eclipse IDE")
+        npath = 'C:\\Users\\akash\\eclipse\\java-2020-06\\eclipse\\eclipse.exe'
+        os.startfile(npath)
+
+    elif"open vlc" in query:
+        speak("opening... vlc")
+        npath = 'C:\Program Files (x86)\VideoLAN\VLC\\vlc.exe'
+        os.startfile(npath)
+
+    # elif"shutdown pc" in query:
+    #     speak("shut it down your pc")
+    #     npath = 'C:\\Windows\\System32\\shutdown.exe -s -t 1'
+    #     os.startfile(npath)
+
+    elif"open command prompt" in query:
+        speak("opening... command prompt")
+        os.system("start cmd")
+#---------------------twteet command------------------------------#
+    elif 'you' in query:
+        speak("what should i tweet")
+        cmm = takecommand().lower()
+        
+        #---------------------tweet for me-------------------------------#
+        def account_info():
+                    with open('account_info.txt','r') as f:
+                        info = f.read().split()
+                        email = info[0]
+                        password = info[1]
+                        return email, password
+        email, password = account_info()
+                    
+        tweet = cmm
+
+        options = Options()
+        options.add_argument("start-maximized")
+        driver = webdriver.Chrome(options=Options())
+
+        driver.get("https://twitter.com/login")
+
+        email_xpath='//*[@id="react-root"]/div/div/div[2]/main/div/div/div[2]/form/div/div[1]/label/div/div[2]/div/input'
+        password_xpath='//*[@id="react-root"]/div/div/div[2]/main/div/div/div[2]/form/div/div[2]/label/div/div[2]/div/input'
+        login_xpath='//*[@id="react-root"]/div/div/div[2]/main/div/div/div[2]/form/div/div[3]/div/div/span/span'
+
+        time.sleep(2)
+
+        driver.find_element_by_xpath(email_xpath).send_keys (email)
+        time.sleep(0.5)
+        driver.find_element_by_xpath(password_xpath).send_keys (password)
+        time.sleep(0.5)
+        driver.find_element_by_xpath(login_xpath).click()
+
+
+        message_xpath='//*[@id="react-root"]/div/div/div[2]/main/div/div/div/div/div/div[2]/div/div[2]/div[1]/div/div/div/div[2]/div[1]/div/div/div/div/div/div/div/div/div/div[1]/div/div/div/div[2]/div/div/div/div'
+        post_xpath='//*[@id="react-root"]/div/div/div[2]/main/div/div/div/div/div/div[2]/div/div[2]/div[1]/div/div/div/div[2]/div[4]/div/div/div[2]/div/div/span/span'
+
+
+
+        time.sleep(12)
+
+        driver.find_element_by_xpath(message_xpath).send_keys (tweet)
+        time.sleep(0.5)
+        driver.find_element_by_xpath(post_xpath).click()
+
+                
+#------------------------------command for Opening camera----------------------------#
+    elif"open camera" in query:
+        cap = cv2.VideoCapture(0)
+        while True:
+            ret, img = cap.read()
+            cv2.imshow('wevcam', img)
+            k = cv2.WaitKey(5000)
+            if k == 27:
+                break
+            cap.release()
+            cv2.destroyAllWindows()
+#--------------------------command for sleeping the jarvis -----------------------#
+    elif 'stop' in query or "you can rest now" in query:
+        speak("ok sir, I am sleeping you can awake anytime ")
+        print("sleeping.....")
+
+        if __name__ == "__main__":
+
+            while True:
+
+                query = sleep().lower()
+
+                if 'wake up' in query:
+                    wishme()
+                    break
+#---------------------------command for exit jarvis----------------------------------#
+    elif "no thank you" in query or "no thanks" in query:
+        speak("thanks for using me sir, have a good day")
+        sys.exit()
